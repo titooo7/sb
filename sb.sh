@@ -49,13 +49,6 @@ SALTBOXMOD_PLAYBOOK_PATH="$SALTBOXMOD_REPO_PATH/saltbox_mod.yml"
 # SB
 SB_REPO_PATH="/srv/git/sb"
 
-readonly PYTHON_CMD_SUFFIX="-m pip install \
-                              --timeout=360 \
-                              --no-cache-dir \
-                              --disable-pip-version-check \
-                              --upgrade"
-readonly PYTHON3_CMD="/srv/ansible/venv/bin/python3 $PYTHON_CMD_SUFFIX"
-
 ################################
 # Functions
 ################################
