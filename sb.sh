@@ -265,9 +265,26 @@ update () {
 
     if [[ ! -d "/srv/ansible" ]]
     then
-      mkdir -p /srv/ansible
-      cd /srv/ansible || exit
-      python3 -m venv venv
+        mkdir -p /srv/ansible
+        cd /srv/ansible || exit
+        release=$(lsb_release -cs)
+
+        if [[ $release =~ (focal)$ ]]; then
+            echo "Focal, deploying venv with Python3.10."
+            add-apt-repository ppa:deadsnakes/ppa --yes
+            apt install python3.10 python3.10-dev python3.10-distutils python3.10-venv -y
+            add-apt-repository ppa:deadsnakes/ppa -r --yes
+            rm -rf /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list
+            rm -rf /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list.save
+            python3.10 -m venv venv
+
+        elif [[ $release =~ (jammy)$ ]]; then
+            echo "Jammy, deploying venv with Python3."
+            python3 -m venv venv
+        else
+            echo "Unsupported Distro, defaulting to Python3."
+            python3 -m venv venv
+        fi
     fi
 
     if [[ -d "${SALTBOX_REPO_PATH}" ]]
@@ -437,12 +454,51 @@ update-ansible () {
     bash "/srv/git/saltbox/scripts/update.sh"
 }
 
+recreate-venv () {
+
+    echo -e "Recreating the Ansible venv."
+    release=$(lsb_release -cs)
+    rm -rf /srv/ansible
+
+    if [[ $release =~ (focal)$ ]]; then
+
+        sudo add-apt-repository ppa:deadsnakes/ppa --yes
+        sudo apt install python3.10 python3.10-dev python3.10-distutils python3.10-venv -y
+        sudo add-apt-repository ppa:deadsnakes/ppa -r --yes
+        sudo rm -rf /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list
+        sudo rm -rf /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list.save
+        python3.10 -m ensurepip
+
+        mkdir -p /srv/ansible
+        cd /srv/ansible || exit
+        python3.10 -m venv venv
+
+    elif [[ $release =~ (jammy)$ ]]; then
+
+        mkdir -p /srv/ansible
+        cd /srv/ansible || exit
+        python3 -m venv venv
+    fi
+
+    bash /srv/git/saltbox/scripts/update.sh
+
+    local returnValue=$?
+
+    if [ $returnValue -ne 0 ]; then
+        exit $returnValue
+    fi
+
+    cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
+    echo -e "Done recreating the Ansible venv."
+
+}
+
 usage () {
     echo "Usage:"
     echo "    sb update              Update Saltbox."
     echo "    sb list                List Saltbox tags."
     echo "    sb install <tag>       Install <tag>."
-    echo "    sb update-ansible      Re-install Ansible."
+    echo "    sb recreate-venv       Re-create Ansible venv."
 }
 
 ################################
@@ -511,8 +567,8 @@ case "$subcommand" in
     sandbox-branch)
         sandbox-branch "${*}"
         ;;
-    update-ansible)
-        update-ansible
+    recreate-venv)
+        recreate-venv
         ;;
     "") echo "A command is required."
         echo ""

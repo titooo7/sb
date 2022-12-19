@@ -15,7 +15,6 @@
 
 VERBOSE=false
 VERBOSE_OPT=""
-SUPPORT=true
 SB_REPO="https://github.com/saltyorg/sb.git"
 SB_PATH="/srv/git/sb"
 SB_INSTALL_SCRIPT="$SB_PATH/sb_install.sh"
@@ -38,18 +37,12 @@ run_cmd () {
 # Argument Parser
 ################################
 
-while getopts 'v-:' f; do
-    case "${f}" in
-    v)  VERBOSE=true
-        VERBOSE_OPT="-v"
-        ;;
-    -)
-        case "${OPTARG}" in
-            no-support)
-                SUPPORT=false
-                ;;
-        esac;;
-    esac
+while getopts 'v' f; do
+  case $f in
+  v)  VERBOSE=true
+      VERBOSE_OPT="-v"
+  ;;
+  esac
 done
 
 ################################
@@ -86,18 +79,10 @@ elif [[ $release =~ (placeholder)$ ]]; then
     echo "$release is currently in testing."
 else
     echo "==== UNSUPPORTED OS ===="
-    if $SUPPORT; then
-        echo "Install cancelled: $release is not supported."
-        echo "Supported OS: 20.04 (focal) and 22.04 (jammy)"
-        echo "==== UNSUPPORTED OS ===="
-        exit 1
-    else
-        echo "Forcing install on $release."
-        echo "You have chosen to ignore support."
-        echo "Do not ask for support on our discord."
-        echo "==== UNSUPPORTED OS ===="
-        sleep 10
-  fi
+    echo "Install cancelled: $release is not supported."
+    echo "Supported OS: 20.04 (focal) and 22.04 (jammy)"
+    echo "==== UNSUPPORTED OS ===="
+    exit 1
 fi
 
 # Check if using valid arch

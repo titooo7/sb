@@ -114,7 +114,27 @@ curl -sLO https://bootstrap.pypa.io/get-pip.py
 python3 get-pip.py
 
 cd /srv/ansible || exit
-python3 -m venv venv
+
+if [[ $release =~ (focal)$ ]]; then
+    echo "Focal, deploying venv with Python3.10."
+    add-apt-repository ppa:deadsnakes/ppa --yes
+    apt install python3.10 python3.10-dev python3.10-distutils python3.10-venv -y
+    add-apt-repository ppa:deadsnakes/ppa -r --yes
+    rm -rf /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list
+    rm -rf /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list.save
+    python3.10 -m ensurepip
+    python3.10 -m venv venv
+
+elif [[ $release =~ (jammy)$ ]]; then
+    echo "Jammy, deploying venv with Python3."
+    python3 -m venv venv
+
+else
+    echo "Unsupported Distro, exiting."
+    exit 1
+fi
+
+
 
 ## Install pip3 Dependencies
 $PYTHON3_CMD \
