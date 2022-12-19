@@ -32,7 +32,8 @@ readonly PYTHON_CMD_SUFFIX="-m pip install \
                               --timeout=360 \
                               --no-cache-dir \
                               --disable-pip-version-check \
-                              --upgrade"
+                              --upgrade \
+                              --root-user-action=ignore"
 readonly PYTHON3_CMD="/srv/ansible/venv/bin/python3 $PYTHON_CMD_SUFFIX"
 readonly ANSIBLE=">=6.0.0,<7.0.0"
 

@@ -512,7 +512,7 @@ cd "${SB_REPO_PATH}" || exit
 
 git fetch
 HEADHASH=$(git rev-parse HEAD)
-UPSTREAMHASH=$(git rev-parse "master@{upstream}")
+UPSTREAMHASH=$(git rev-parse "develop@{upstream}")
 
 if [ "$HEADHASH" != "$UPSTREAMHASH" ]
 then
