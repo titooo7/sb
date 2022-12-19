@@ -120,11 +120,11 @@ python3 -m venv venv
 $PYTHON3_CMD \
     pip setuptools wheel
 $PYTHON3_CMD \
-    pyOpenSSL \
-    requests \
-    netaddr \
-    jmespath \
-    jinja2 \
+    pyOpenSSL requests netaddr \
+    jmespath jinja2 docker \
+    ruamel.yaml tld argon2_cffi \
+    ndg-httpsclient dnspython lxml \
+    jmespath passlib PyMySQL \
     ansible$ANSIBLE
 
 cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
