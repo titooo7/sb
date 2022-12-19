@@ -49,6 +49,13 @@ SALTBOXMOD_PLAYBOOK_PATH="$SALTBOXMOD_REPO_PATH/saltbox_mod.yml"
 # SB
 SB_REPO_PATH="/srv/git/sb"
 
+readonly PYTHON_CMD_SUFFIX="-m pip install \
+                              --timeout=360 \
+                              --no-cache-dir \
+                              --disable-pip-version-check \
+                              --upgrade"
+readonly PYTHON3_CMD="/srv/ansible/venv/bin/python3 $PYTHON_CMD_SUFFIX"
+
 ################################
 # Functions
 ################################
@@ -270,16 +277,6 @@ update () {
       python3 -m venv venv
     fi
 
-    python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade apprise certbot
-    /srv/ansible/venv/bin/python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade pip setuptools wheel
-    /srv/ansible/venv/bin/python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade pyOpenSSL requests netaddr jmespath jinja2 ansible">=6.0.0,<7.0.0"
-    /srv/ansible/venv/bin/python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade ruamel.yaml tld argon2_cffi ndg-httpsclient
-    /srv/ansible/venv/bin/python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade dnspython lxml jmespath passlib PyMySQL
-    /srv/ansible/venv/bin/python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade docker
-
-    cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
-    sed -i 's/\/usr\/bin\/python3/\/srv\/ansible\/venv\/bin\/python3/g' /srv/git/saltbox/ansible.cfg
-
     if [[ -d "${SALTBOX_REPO_PATH}" ]]
     then
         echo -e "Updating Saltbox...\n"
@@ -287,6 +284,11 @@ update () {
         cd "${SALTBOX_REPO_PATH}" || exit
 
         git_fetch_and_reset
+
+        bash /srv/git/saltbox/scripts/update.sh
+
+        cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
+        sed -i 's/\/usr\/bin\/python3/\/srv\/ansible\/venv\/bin\/python3/g' /srv/git/saltbox/ansible.cfg
 
         run_playbook_sb "--tags settings" && echo -e '\n'
 
