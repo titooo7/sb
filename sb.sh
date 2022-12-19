@@ -269,7 +269,7 @@ update () {
       cd /srv/ansible || exit
       python3 -m venv venv
       /srv/ansible/venv/bin/python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade pip setuptools wheel
-      bash "/srv/git/saltbox/scripts/update.sh"
+      /srv/ansible/venv/bin/python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade pyOpenSSL requests netaddr jmespath jinja2 ansible">=6.0.0,<7.0.0"
       cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
     fi
 
