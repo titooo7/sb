@@ -457,7 +457,10 @@ update-ansible () {
 recreate-venv () {
 
     echo -e "Recreating the Ansible venv."
+
+    # Check for supported Ubuntu Releases
     release=$(lsb_release -cs)
+
     rm -rf /srv/ansible
 
     if [[ $release =~ (focal)$ ]]; then

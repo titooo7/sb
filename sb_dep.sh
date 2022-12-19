@@ -104,16 +104,15 @@ else
     echo "locale was set to en_US.UTF-8"
 fi
 
-
-## Uninstall setuptools as a workaround for https://github.com/pypa/pip/issues/10742
-python3 -m pip uninstall -y setuptools
-
 ## Install pip3
 cd /tmp || exit
 curl -sLO https://bootstrap.pypa.io/get-pip.py
 python3 get-pip.py
 
 cd /srv/ansible || exit
+
+# Check for supported Ubuntu Releases
+release=$(lsb_release -cs)
 
 if [[ $release =~ (focal)$ ]]; then
     echo "Focal, deploying venv with Python3.10."
@@ -128,13 +127,10 @@ if [[ $release =~ (focal)$ ]]; then
 elif [[ $release =~ (jammy)$ ]]; then
     echo "Jammy, deploying venv with Python3."
     python3 -m venv venv
-
 else
     echo "Unsupported Distro, exiting."
     exit 1
 fi
-
-
 
 ## Install pip3 Dependencies
 $PYTHON3_CMD \
