@@ -309,6 +309,8 @@ sandbox-update () {
 
         git_fetch_and_reset_sandbox
 
+        sed -i 's/\/usr\/bin\/python3/\/srv\/ansible\/venv\/bin\/python3/g' /opt/sandbox/ansible.cfg
+
         run_playbook_sandbox "--tags settings" && echo -e '\n'
 
         echo -e "Update Completed."
