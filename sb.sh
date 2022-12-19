@@ -271,6 +271,7 @@ update () {
       /srv/ansible/venv/bin/python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade pip setuptools wheel
       /srv/ansible/venv/bin/python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade pyOpenSSL requests netaddr jmespath jinja2 ansible">=6.0.0,<7.0.0"
       cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
+      sed -i 's/\/usr\/bin\/python3/\/srv\/ansible\/venv\/bin\/python3/g' /srv/git/saltbox/ansible.cfg
     fi
 
     if [[ -d "${SALTBOX_REPO_PATH}" ]]
