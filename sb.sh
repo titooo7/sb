@@ -280,6 +280,12 @@ update () {
 
         bash /srv/git/saltbox/scripts/update.sh
 
+        local returnValue=$?
+
+        if [ $returnValue -ne 0 ]; then
+            exit $returnValue
+        fi
+
         cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
         sed -i 's/\/usr\/bin\/python3/\/srv\/ansible\/venv\/bin\/python3/g' /srv/git/saltbox/ansible.cfg
 
