@@ -263,6 +263,16 @@ install () {
 
 update () {
 
+    if [[ ! -d "/srv/ansible" ]]
+    then
+      mkdir -p /srv/ansible
+      cd /srv/ansible || exit
+      python3 -m venv venv
+      /srv/ansible/venv/bin/python3 -m pip install --no-cache-dir --disable-pip-version-check --upgrade pip setuptools wheel
+      bash "/srv/git/saltbox/scripts/update.sh"
+      cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
+    fi
+
     if [[ -d "${SALTBOX_REPO_PATH}" ]]
     then
         echo -e "Updating Saltbox...\n"

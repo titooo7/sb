@@ -33,7 +33,7 @@ readonly PYTHON_CMD_SUFFIX="-m pip install \
                               --no-cache-dir \
                               --disable-pip-version-check \
                               --upgrade"
-readonly PYTHON3_CMD="python3 $PYTHON_CMD_SUFFIX"
+readonly PYTHON3_CMD="/srv/ansible/venv/bin/python3 $PYTHON_CMD_SUFFIX"
 readonly ANSIBLE=">=6.0.0,<7.0.0"
 
 ################################
@@ -113,6 +113,9 @@ cd /tmp || exit
 curl -sLO https://bootstrap.pypa.io/get-pip.py
 python3 get-pip.py
 
+cd /srv/ansible || exit
+python3 -m venv venv
+
 ## Install pip3 Dependencies
 $PYTHON3_CMD \
     pip setuptools wheel
@@ -123,6 +126,8 @@ $PYTHON3_CMD \
     jmespath \
     jinja2 \
     ansible$ANSIBLE
+
+cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
 
 ## Copy /usr/local/bin/pip to /usr/bin/pip
 [ -f /usr/local/bin/pip3 ] && cp /usr/local/bin/pip3 /usr/bin/pip3
