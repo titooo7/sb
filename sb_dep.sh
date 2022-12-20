@@ -32,7 +32,8 @@ readonly PYTHON_CMD_SUFFIX="-m pip install \
                               --timeout=360 \
                               --no-cache-dir \
                               --disable-pip-version-check \
-                              --upgrade"
+                              --upgrade \
+                              --root-user-action=ignore"
 readonly PYTHON3_CMD="/srv/ansible/venv/bin/python3 $PYTHON_CMD_SUFFIX"
 readonly ANSIBLE=">=6.0.0,<7.0.0"
 
@@ -104,17 +105,33 @@ else
     echo "locale was set to en_US.UTF-8"
 fi
 
-
-## Uninstall setuptools as a workaround for https://github.com/pypa/pip/issues/10742
-python3 -m pip uninstall -y setuptools
-
 ## Install pip3
 cd /tmp || exit
 curl -sLO https://bootstrap.pypa.io/get-pip.py
 python3 get-pip.py
 
 cd /srv/ansible || exit
-python3 -m venv venv
+
+# Check for supported Ubuntu Releases
+release=$(lsb_release -cs)
+
+if [[ $release =~ (focal)$ ]]; then
+    echo "Focal, deploying venv with Python3.10."
+    add-apt-repository ppa:deadsnakes/ppa --yes
+    apt install python3.10 python3.10-dev python3.10-distutils python3.10-venv -y
+    add-apt-repository ppa:deadsnakes/ppa -r --yes
+    rm -rf /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list
+    rm -rf /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list.save
+    python3.10 -m ensurepip
+    python3.10 -m venv venv
+
+elif [[ $release =~ (jammy)$ ]]; then
+    echo "Jammy, deploying venv with Python3."
+    python3 -m venv venv
+else
+    echo "Unsupported Distro, exiting."
+    exit 1
+fi
 
 ## Install pip3 Dependencies
 $PYTHON3_CMD \
