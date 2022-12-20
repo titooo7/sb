@@ -285,6 +285,16 @@ update () {
             echo "Unsupported Distro, defaulting to Python3."
             python3 -m venv venv
         fi
+    else
+        /srv/ansible/venv/bin/python3 --version | grep -q '^Python 3\.10.'
+        local python_version_valid=$?
+
+        if [ $python_version_valid -eq 0 ]; then
+            echo "Python venv is running with Python 3.10."
+        else
+            echo "Python venv is not running with Python 3.10. Recreating."
+            recreate-venv
+        fi
     fi
 
     if [[ -d "${SALTBOX_REPO_PATH}" ]]
