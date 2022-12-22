@@ -263,39 +263,7 @@ install () {
 
 update () {
 
-    if [[ ! -d "/srv/ansible" ]]
-    then
-        mkdir -p /srv/ansible
-        cd /srv/ansible || exit
-        release=$(lsb_release -cs)
-
-        if [[ $release =~ (focal)$ ]]; then
-            echo "Focal, deploying venv with Python3.10."
-            add-apt-repository ppa:deadsnakes/ppa --yes
-            apt install python3.10 python3.10-dev python3.10-distutils python3.10-venv -y
-            add-apt-repository ppa:deadsnakes/ppa -r --yes
-            rm -rf /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list
-            rm -rf /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-focal.list.save
-            python3.10 -m venv venv
-
-        elif [[ $release =~ (jammy)$ ]]; then
-            echo "Jammy, deploying venv with Python3."
-            python3 -m venv venv
-        else
-            echo "Unsupported Distro, defaulting to Python3."
-            python3 -m venv venv
-        fi
-    else
-        /srv/ansible/venv/bin/python3 --version | grep -q '^Python 3\.10.'
-        local python_version_valid=$?
-
-        if [ $python_version_valid -eq 0 ]; then
-            echo "Python venv is running with Python 3.10."
-        else
-            echo "Python venv is not running with Python 3.10. Recreating."
-            recreate-venv
-        fi
-    fi
+    deploy_ansible_venv
 
     if [[ -d "${SALTBOX_REPO_PATH}" ]]
     then
@@ -418,6 +386,59 @@ saltboxmod-list () {
 
 saltbox-branch () {
 
+    deploy_ansible_venv
+
+    if [[ -d "${SALTBOX_REPO_PATH}" ]]
+    then
+        echo -e "Changing Saltbox branch to $1...\n"
+
+        cd "${SALTBOX_REPO_PATH}" || exit
+
+        SALTBOX_BRANCH=$1
+
+        git_fetch_and_reset
+
+        bash /srv/git/saltbox/scripts/update.sh
+
+        local returnValue=$?
+
+        if [ $returnValue -ne 0 ]; then
+            exit $returnValue
+        fi
+
+        cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
+        sed -i 's/\/usr\/bin\/python3/\/srv\/ansible\/venv\/bin\/python3/g' /srv/git/saltbox/ansible.cfg
+
+        run_playbook_sb "--tags settings" && echo -e '\n'
+
+        echo "Branch change and update completed."
+    else
+        echo "Saltbox folder not present."
+    fi
+
+}
+
+sandbox-branch () {
+
+    if [[ -d "${SANDBOX_REPO_PATH}" ]]
+    then
+        echo -e "Changing Sandbox branch to $1...\n"
+
+        cd "${SANDBOX_REPO_PATH}" || exit
+
+        SANDBOX_BRANCH=$1
+
+        git_fetch_and_reset_sandbox
+
+        run_playbook_sandbox "--tags settings" && echo -e '\n'
+
+        echo "Branch change and update completed."
+    fi
+
+}
+
+deploy_ansible_venv () {
+
     if [[ ! -d "/srv/ansible" ]]
     then
         mkdir -p /srv/ansible
@@ -452,53 +473,6 @@ saltbox-branch () {
         fi
     fi
 
-    if [[ -d "${SALTBOX_REPO_PATH}" ]]
-    then
-        echo -e "Changing Saltbox branch to $1...\n"
-
-        cd "${SALTBOX_REPO_PATH}" || exit
-
-        SALTBOX_BRANCH=$1
-
-        git_fetch_and_reset
-
-        bash /srv/git/saltbox/scripts/update.sh
-
-        local returnValue=$?
-
-        if [ $returnValue -ne 0 ]; then
-            exit $returnValue
-        fi
-
-        cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
-        sed -i 's/\/usr\/bin\/python3/\/srv\/ansible\/venv\/bin\/python3/g' /srv/git/saltbox/ansible.cfg
-
-        run_playbook_sb "--tags settings" && echo -e '\n'
-
-        echo -e "Update Completed."
-    else
-        echo -e "Saltbox folder not present."
-    fi
-
-}
-
-sandbox-branch () {
-
-    if [[ -d "${SANDBOX_REPO_PATH}" ]]
-    then
-        echo -e "Changing Sandbox branch to $1...\n"
-
-        cd "${SANDBOX_REPO_PATH}" || exit
-
-        SANDBOX_BRANCH=$1
-
-        git_fetch_and_reset_sandbox
-
-        run_playbook_sandbox "--tags settings" && echo -e '\n'
-
-        echo -e "Update Completed."
-    fi
-
 }
 
 list () {
@@ -513,7 +487,7 @@ update-ansible () {
 
 recreate-venv () {
 
-    echo -e "Recreating the Ansible venv."
+    echo "Recreating the Ansible venv."
 
     # Check for supported Ubuntu Releases
     release=$(lsb_release -cs)
@@ -549,7 +523,7 @@ recreate-venv () {
     fi
 
     cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
-    echo -e "Done recreating the Ansible venv."
+    echo "Done recreating the Ansible venv."
 
 }
 
@@ -573,9 +547,9 @@ UPSTREAMHASH=$(git rev-parse "master@{upstream}")
 
 if [ "$HEADHASH" != "$UPSTREAMHASH" ]
 then
-    echo -e Not up to date with origin. Updating.
+    echo "Not up to date with origin. Updating."
     sb-update
-    echo -e Relaunching with previous arguments.
+    echo "Relaunching with previous arguments."
     sudo "$0" "$@"
     exit 0
 fi
