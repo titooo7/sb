@@ -104,11 +104,6 @@ else
     echo "locale was set to en_US.UTF-8"
 fi
 
-## Install pip3
-cd /tmp || exit
-curl -sLO https://bootstrap.pypa.io/get-pip.py
-python3 get-pip.py
-
 cd /srv/ansible || exit
 
 # Check for supported Ubuntu Releases
@@ -131,6 +126,11 @@ else
     echo "Unsupported Distro, exiting."
     exit 1
 fi
+
+## Install pip3
+cd /tmp || exit
+curl -sLO https://bootstrap.pypa.io/get-pip.py
+python3 get-pip.py
 
 ## Install pip3 Dependencies
 $PYTHON3_CMD \

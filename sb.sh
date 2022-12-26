@@ -473,6 +473,11 @@ deploy_ansible_venv () {
         fi
     fi
 
+    ## Install pip3
+    cd /tmp || exit
+    curl -sLO https://bootstrap.pypa.io/get-pip.py
+    python3 get-pip.py
+
 }
 
 list () {
@@ -524,6 +529,11 @@ recreate-venv () {
 
     cp /srv/ansible/venv/bin/ansible* /usr/local/bin/
     echo "Done recreating the Ansible venv."
+
+    ## Install pip3
+    cd /tmp || exit
+    curl -sLO https://bootstrap.pypa.io/get-pip.py
+    python3 get-pip.py
 
 }
 
