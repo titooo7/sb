@@ -335,7 +335,7 @@ sb-list ()  {
         "${ANSIBLE_PLAYBOOK_BINARY_PATH}" \
             "${SALTBOX_PLAYBOOK_PATH}" \
             --become \
-            --list-tags --skip-tags "always" 2>&1 | grep "TASK TAGS" | cut -d":" -f2 | awk '{sub(/\[/, "")sub(/\]/, "")}1' | cut -c2-
+            --list-tags --skip-tags "always" 2>&1 | grep "TASK TAGS" | cut -d":" -f2 | sed 's/[][]//g' | cut -c2- | sed 's/, /\n/g' | column
 
         echo -e "\n"
 
@@ -356,7 +356,7 @@ sandbox-list () {
         "${ANSIBLE_PLAYBOOK_BINARY_PATH}" \
             "${SANDBOX_PLAYBOOK_PATH}" \
             --become \
-            --list-tags --skip-tags "always,sanity_check" 2>&1 | grep "TASK TAGS" | cut -d":" -f2 | awk '{sub(/\[/, "")sub(/\]/, "")}1' | cut -c2-
+            --list-tags --skip-tags "always,sanity_check" 2>&1 | grep "TASK TAGS" | cut -d":" -f2 | sed 's/[][]//g' | cut -c2- | sed 's/, /\n/g' | column
 
         echo -e "\n"
 
@@ -375,7 +375,7 @@ saltboxmod-list () {
         "${ANSIBLE_PLAYBOOK_BINARY_PATH}" \
             "${SALTBOXMOD_PLAYBOOK_PATH}" \
             --become \
-            --list-tags --skip-tags "always,sanity_check" 2>&1 | grep "TASK TAGS" | cut -d":" -f2 | awk '{sub(/\[/, "")sub(/\]/, "")}1' | cut -c2-
+            --list-tags --skip-tags "always,sanity_check" 2>&1 | grep "TASK TAGS" | cut -d":" -f2 | sed 's/[][]//g' | cut -c2- | sed 's/, /\n/g' | column
 
         echo -e "\n"
 
