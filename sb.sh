@@ -478,6 +478,8 @@ deploy_ansible_venv () {
     curl -sLO https://bootstrap.pypa.io/get-pip.py
     python3 get-pip.py
 
+    chown -R "${user_name}":"${user_name}" "/srv/ansible"
+
 }
 
 list () {
@@ -535,6 +537,7 @@ recreate-venv () {
     curl -sLO https://bootstrap.pypa.io/get-pip.py
     python3 get-pip.py
 
+    chown -R "${user_name}":"${user_name}" "/srv/ansible"
 }
 
 usage () {
