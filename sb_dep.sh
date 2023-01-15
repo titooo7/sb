@@ -93,16 +93,11 @@ apt-get install -y \
     python3-virtualenv \
     python3-venv
 
-## Check locale contains UTF-8 and if not change it to en_US.UTF-8
-if (locale charmap | grep -qi 'utf-\+8'); then
-    echo "Uses UTF-8 encoding."
-else
-    locale-gen en_US.UTF-8
-    update-locale
-    export LC_ALL=en_US.UTF-8
-    echo "Not using UTF-8 encoding."
-    echo "locale was set to en_US.UTF-8"
-fi
+## Enforce en_US.UTF-8
+locale-gen en_US.UTF-8
+update-locale
+export LC_ALL=en_US.UTF-8
+echo "locale was set to en_US.UTF-8"
 
 cd /srv/ansible || exit
 
