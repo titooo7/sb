@@ -49,6 +49,13 @@ SALTBOXMOD_PLAYBOOK_PATH="$SALTBOXMOD_REPO_PATH/saltbox_mod.yml"
 # SB
 SB_REPO_PATH="/srv/git/sb"
 
+readonly PYTHON_CMD_SUFFIX="-m pip install \
+                              --timeout=360 \
+                              --no-cache-dir \
+                              --disable-pip-version-check \
+                              --upgrade"
+readonly PYTHON3_CMD="/srv/ansible/venv/bin/python3 $PYTHON_CMD_SUFFIX"
+
 ################################
 # Functions
 ################################
@@ -478,6 +485,13 @@ deploy_ansible_venv () {
     curl -sLO https://bootstrap.pypa.io/get-pip.py
     python3 get-pip.py
 
+    $PYTHON3_CMD \
+        tld argon2_cffi ndg-httpsclient \
+        dnspython lxml jmespath \
+        passlib PyMySQL docker \
+        pyOpenSSL requests netaddr \
+        jinja2
+
     chown -R "${user_name}":"${user_name}" "/srv/ansible"
 
 }
@@ -536,6 +550,13 @@ recreate-venv () {
     cd /tmp || exit
     curl -sLO https://bootstrap.pypa.io/get-pip.py
     python3 get-pip.py
+
+    $PYTHON3_CMD \
+        tld argon2_cffi ndg-httpsclient \
+        dnspython lxml jmespath \
+        passlib PyMySQL docker \
+        pyOpenSSL requests netaddr \
+        jinja2
 
     chown -R "${user_name}":"${user_name}" "/srv/ansible"
 }
