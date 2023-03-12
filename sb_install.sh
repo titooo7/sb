@@ -19,6 +19,7 @@ SB_REPO="https://github.com/saltyorg/sb.git"
 SB_PATH="/srv/git/sb"
 SB_INSTALL_SCRIPT="$SB_PATH/sb_install.sh"
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+BRANCH="master"
 
 ################################
 # Functions
@@ -37,10 +38,12 @@ run_cmd () {
 # Argument Parser
 ################################
 
-while getopts 'v' f; do
+while getopts 'vb:' f; do
   case $f in
   v)  VERBOSE=true
       VERBOSE_OPT="-v"
+  ;;
+  b)  BRANCH=$OPTARG
   ;;
   esac
 done
@@ -145,4 +148,4 @@ fi
 run_cmd bash -H $SB_PATH/sb_dep.sh $VERBOSE_OPT
 
 # Clone Saltbox Repo
-run_cmd bash -H $SB_PATH/sb_repo.sh -b master $VERBOSE_OPT
+run_cmd bash -H $SB_PATH/sb_repo.sh -b "${BRANCH}" $VERBOSE_OPT
