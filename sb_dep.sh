@@ -53,7 +53,7 @@ done
 
 $VERBOSE || exec &>/dev/null
 
-## Disable IPv6
+## IPv6
 if [ -f "$SYSCTL_PATH" ]; then
     ## Remove 'Disable IPv6' entries from sysctl
     sed -i -e '/^net.ipv6.conf.all.disable_ipv6/d' "$SYSCTL_PATH"
