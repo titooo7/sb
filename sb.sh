@@ -444,6 +444,10 @@ sandbox-branch () {
 
 }
 
+bench () {
+    wget -qO- bench.sh | bash
+}
+
 deploy_ansible_venv () {
 
     if [[ ! -d "/srv/ansible" ]]
@@ -566,6 +570,7 @@ usage () {
     echo "    sb update              Update Saltbox."
     echo "    sb list                List Saltbox tags."
     echo "    sb install <tag>       Install <tag>."
+    echo "    sb bench               Run bench.sh"
     echo "    sb recreate-venv       Re-create Ansible venv."
 }
 
@@ -637,6 +642,9 @@ case "$subcommand" in
         ;;
     recreate-venv)
         recreate-venv
+        ;;
+    bench)
+        bench
         ;;
     "") echo "A command is required."
         echo ""
