@@ -83,6 +83,7 @@ apt-get install -y \
     nano \
     git \
     curl \
+    jq \
     gpg-agent \
     build-essential \
     libssl-dev \
