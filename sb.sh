@@ -164,8 +164,6 @@ install () {
       exit 1
     fi
 
-    echo "${arg[*]}"
-
     # Remove space after comma
     # shellcheck disable=SC2128,SC2001
     local arg_clean
