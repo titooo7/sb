@@ -2,7 +2,7 @@
 #########################################################################
 # Title:         Saltbox Repo Cloner Script                             #
 # Author(s):     desimaniac, salty                                      #
-# URL:           https://github.com/saltyorg/sb                         #
+# URL:           https://github.com/titooo7/sb                         #
 # --                                                                    #
 #########################################################################
 #                   GNU General Public License v3.0                     #
@@ -15,7 +15,7 @@
 VERBOSE=false
 BRANCH='master'
 SALTBOX_PATH="/srv/git/saltbox"
-SALTBOX_REPO="https://github.com/saltyorg/saltbox.git"
+SALTBOX_REPO="https://github.com/titooo7/saltbox.git"
 
 ################################
 # Functions
