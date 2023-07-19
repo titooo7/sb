@@ -15,7 +15,7 @@
 
 VERBOSE=false
 VERBOSE_OPT=""
-SB_REPO="https://github.com/saltyorg/sb.git"
+SB_REPO="https://github.com/titooo7/sb.git"
 SB_PATH="/srv/git/sb"
 SB_INSTALL_SCRIPT="$SB_PATH/sb_install.sh"
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
