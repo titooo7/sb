@@ -3,7 +3,7 @@
 #########################################################################
 # Title:         Saltbox Install Script                                 #
 # Author(s):     desimaniac, salty                                      #
-# URL:           https://github.com/saltyorg/sb                         #
+# URL:           https://github.com/titooo7/sb                         #
 # --                                                                    #
 #########################################################################
 #                   GNU General Public License v3.0                     #
